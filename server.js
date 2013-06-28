@@ -1,27 +1,23 @@
-var fs = require('fs');
+#!/usr/bin/env node
+var util = require('util');
 var socket = require('socket.io');
-var http = require("http")
+var http = require("http");
+var commander = require('commander');
+var applyConfig = require('./functions.js');
 
-var configPath = './config.json';
+commander
+	.version('0.5')
+	.option('-c, --config [value]', 'Set config file, use relative or absolute paths', './config.js')
+	.parse(process.argv);
 
-var defaults = {
-	"server": {
-		"host": "127.0.0.1",
-		"port": 8080
-	},
-	"app": {
-		"debug": false
-	},
-	"io": {
-		"log level": 1
-	}
-};
+var configPath = commander.config;
+var defaults = './defaults.js';
 
-if(fs.existsSync(configPath)) {
+try {
 	var config = require(configPath);
-} else {
-	console.log('config.json missing, using default host and port: ' + defaults.server.host + ':' +defaults.server.port);
-	var config = defaults;
+} catch(err) {
+	var config = require(defaults);
+	console.log(util.format('%s not found, using default host and port: %s:%s', configPath, config.server.host, config.server.port));
 }
 
 var appOptions = config.hasOwnProperty('app') ? config.app : {};
@@ -30,11 +26,7 @@ var server = http.createServer();
 server.listen(config.server.port, config.server.host);
 var io = socket.listen(server, appOptions);
 
-if(config.hasOwnProperty('io')) {
-	for(option in config.io) {
-		io.set(option, config.io.option);
-	}
-}
+applyConfig(config, appOptions, io);
 
 io.sockets.on('connection', function (socket) {
 

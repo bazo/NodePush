@@ -1,5 +1,9 @@
 {
+	"name": "NodePush",
+	"description": "Simple push server",
+	"author": "Martin Bažík <martin@bazo.sk>",
 	"dependencies": {
-		"socket.io": "~0.9.11"
+		"socket.io": "*",
+		"commander": "*"
 	}
 }
