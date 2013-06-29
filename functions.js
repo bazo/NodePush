@@ -1,3 +1,5 @@
+var util = require('util');
+
 function applyConfig (config, appOptions, io) {
 	if(config.hasOwnProperty('io')) {
 		if(config.io.hasOwnProperty('set')) {
