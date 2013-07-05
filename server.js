@@ -3,7 +3,7 @@ var util = require('util');
 var socket = require('socket.io');
 var http = require("http");
 var commander = require('commander');
-var applyConfig = require('./functions.js');
+var applyConfig = require('./applyConfig.js');
 
 commander
 	.version('0.5')
@@ -28,6 +28,56 @@ var io = socket.listen(server, appOptions);
 
 applyConfig(config, appOptions, io);
 
+var useVerification = false;
+var hmac = null;
+
+if(config.hasOwnProperty('security')) {
+	if(!config.security.hasOwnProperty('enabled')) {
+		console.log('Missing config.security.enabled');
+		process.exit(1);
+	}
+	if(config.security.enabled === true) {
+		useVerification = true;
+		if(!config.security.hasOwnProperty('key')) {
+			console.log('Missing config.security.key');
+			process.exit(1);
+		}
+		
+		if(!config.security.hasOwnProperty('allowedTimeDiff')) {
+			config.security.allowedTimeDiff = 5;
+		}
+		
+		var crypto = require('crypto');
+	}
+}
+
+function verifyPayload(data, callback, errorCallback) {
+	var unixTimestamp = Math.round(new Date / 1000);
+	
+	if(useVerification === false) {
+		callback();
+		
+	} else if((unixTimestamp - data.timestamp) > config.security.allowedTimeDiff) {
+		errorCallback('Payload too old.');
+		
+	} else if(!data.hasOwnProperty('signature')) {
+		errorCallback('Missing signature.');
+		
+	} else {
+		var signature = data.signature;
+		delete data.signature;
+		
+		hmac = crypto.createHmac('md5', config.security.key);
+		var hash = hmac.update(JSON.stringify(data)).digest('hex');
+		if(hash === signature) {
+			callback();
+		} else {
+			errorCallback('Signature mismatch.');
+		}
+	}
+}
+
+
 io.sockets.on('connection', function (socket) {
 
 	socket.on('subscribe', function(data) {
@@ -45,8 +95,17 @@ io.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('push', function(data) {
-		data = JSON.parse(data);
-		io.sockets.in(data.room).emit(data.event, data.data);
+		var callback = function() {
+			io.sockets.in(data.room).emit(data.event, data.data);
+		};
+		
+		var errorCallback = function (message) {
+			if(appOptions.debug) {
+				console.log('Could not verify payload: ' + message);
+			}
+		}
+		
+		verifyPayload(data, callback, errorCallback);
 	});
 
 	socket.on('disconnect', function () {

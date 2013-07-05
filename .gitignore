@@ -9,6 +9,6 @@ npm-debug.log
 !package.json
 !server.js
 !defaults.js
-!functions.js
+!applyConfig.js
 !logs
 !logger.js

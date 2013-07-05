@@ -15,6 +15,11 @@ var config = {
 			"browser client etag",
 			"browser client gzip"
 		]
+	},
+	"security": {
+		"enabled": true,
+		"key": "changeThisToSomethingRandomAndSecure",
+		"allowedTimeDiff": 5
 	}
 };
 module.exports = config;
