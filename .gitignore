@@ -2,13 +2,4 @@ nbproject
 config.json
 node_modules
 npm-debug.log
-
-*
-!.gitignore
-!config.sample.js
-!package.json
-!server.js
-!defaults.js
-!applyConfig.js
-!logs
-!logger.js
+config.js

@@ -1,10 +1,13 @@
 var config = {
 	"server": {
-		"host": "127.0.0.1",
+		"host": "0.0.0.0",
 		"port": 8080
 	},
 	"app": {
 		"debug": false
+	},
+	"push": {
+		"volatile": false
 	},
 	"io": {
 		"set": {
@@ -17,7 +20,7 @@ var config = {
 		]
 	},
 	"security": {
-		"enabled": true,
+		"enabled": false,
 		"key": "changeThisToSomethingRandomAndSecure",
 		"allowedTimeDiff": 5
 	}

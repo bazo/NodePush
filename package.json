@@ -4,6 +4,7 @@
 	"author": "Martin Bažík <martin@bazo.sk>",
 	"dependencies": {
 		"socket.io": "*",
-		"commander": "*"
+		"commander": "*",
+		"deepmerge": "*"
 	}
 }
