@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var util = require('util');
 var socket = require('socket.io');
-var http = require("http");
 var commander = require('commander');
 var merge = require('deepmerge');
 var applyConfig = require('./functions/applyConfig.js');
@@ -25,14 +24,35 @@ try {
 }
 config = merge(defaults, config);
 
+if(config.server.https.enabled === true) {
+	var protocol = require("https");
+	var fs = require('fs');
+	
+	if(config.server.https.format === 'keyCert') {
+	
+		var options = {
+			key: fs.readFileSync(config.server.https.keyCert.key),
+			cert: fs.readFileSync(config.server.https.keyCert.cert)
+		};
+	}
+	
+	if(config.server.https.format === 'pfx') {
+		var options = {
+			pfx: fs.readFileSync(config.server.https.pfx)
+		};
+		
+	}
+	
+	var server = protocol.createServer(options);
+} else {
+	var protocol = require("http");
+	var server = protocol.createServer();
+}
 
-var server = http.createServer();
 server.listen(config.server.port, config.server.host);
 var io = socket.listen(server, config.app);
 
 applyConfig(config, config.app, io);
-
-
 
 if(config.security.enabled === true) {
 	var crypto = require('crypto');

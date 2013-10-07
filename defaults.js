@@ -1,7 +1,16 @@
 var config = {
 	"server": {
 		"host": "0.0.0.0",
-		"port": 8080
+		"port": 8080,
+		"https": {
+			"enabled": false,
+			"format": null, //keyCert or pfx
+			"keyCert": {
+				"key": null,
+				"cert": null
+			},
+			"pfx": null
+		}
 	},
 	"app": {
 		"debug": false
