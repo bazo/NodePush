@@ -9,7 +9,8 @@ var config = {
 				"key": null,
 				"cert": null
 			},
-			"pfx": null
+			"pfx": null,
+			"passphrase": null
 		}
 	},
 	"app": {
