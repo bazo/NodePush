@@ -1,16 +1,16 @@
 var config = {
 	"server": {
-		"host": "0.0.0.0",
-		"port": 8080,
+		"host": "0.0.0.0", //all interfaces
+		"port": 8080, //example port
 		"https": {
 			"enabled": false,
 			"format": null, //keyCert or pfx
 			"keyCert": {
-				"key": null,
-				"cert": null
+				"key": "path/to/key-file",
+				"cert": "path/to/cert-file"
 			},
-			"pfx": null,
-			"passphrase": null
+			"pfx": "path/to/pfx-file",
+			"passphrase": "your passphrase"
 		}
 	},
 	"app": {
@@ -30,7 +30,7 @@ var config = {
 		]
 	},
 	"security": {
-		"enabled": false,
+		"enabled": false, //if you want to prevent others to send messages through this server
 		"key": "changeThisToSomethingRandomAndSecure",
 		"allowedTimeDiff": 5
 	}
