@@ -19,16 +19,6 @@ var config = {
 	"push": {
 		"volatile": false
 	},
-	"io": {
-		"set": {
-			"log level": 1
-		},
-		"enable": [
-			"browser client minification",
-			"browser client etag",
-			"browser client gzip"
-		]
-	},
 	"security": {
 		"enabled": false, //if you want to prevent others to send messages through this server
 		"key": "changeThisToSomethingRandomAndSecure",

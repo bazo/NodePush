@@ -3,7 +3,6 @@ var util = require('util');
 var socket = require('socket.io');
 var commander = require('commander');
 var merge = require('deepmerge');
-var applyConfig = require('./functions/applyConfig.js');
 var verifyPayload = require('./functions/verifyPayload.js');
 
 commander
@@ -61,8 +60,6 @@ if (config.server.https.enabled === true) {
 
 server.listen(config.server.port, config.server.host);
 var io = socket.listen(server, config.app);
-
-applyConfig(config, config.app, io);
 
 if (config.security.enabled === true) {
 	var crypto = require('crypto');
