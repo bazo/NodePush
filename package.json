@@ -3,6 +3,7 @@
 	"description": "Simple push server",
 	"author": "Martin Bažík <martin@bazo.sk>",
 	"repository": "",
+	"main": "server.js",
 	"dependencies": {
 		"socket.io": "0.9",
 		"commander": "*",
