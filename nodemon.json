@@ -1,0 +1,9 @@
+{
+	"execMap": {
+		"js": "node --harmony"
+	},
+	"watch": [
+		"config"
+	],
+	"ext": "js json"
+}

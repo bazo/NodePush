@@ -1,0 +1,10 @@
+shared_folders:
+	- logs
+	- config
+hooks:
+	after_receive:
+		- "npm install"
+	before_deploy:
+	after_deploy:
+		#- "forever stop server.js"
+		#- "forever start -l forever.log -o out.log --append -e err.log server.js"
