@@ -12,20 +12,45 @@ and open the template in the editor.
 
 		<script>
 
-			var socket = new ReconnectingWebSocket("ws:/127.0.0.1:8080");
+			var socket = new ReconnectingWebSocket("ws://trophy14.local:8080");
+//var socket = new WebSocket("ws://trophy14.local:8080");
 
 			socket.onopen = function (event) {
 
 				var data = {
-					room: websockets.room
+					event: 'join',
+					rooms: [userId]
+				};
+
+				socket.send(JSON.stringify(data));
+
+				var data = {
+					event: 'join',
+					rooms: ['test', 'auticka'],
 				};
 
 				socket.send(JSON.stringify(data));
 			};
 
+
+
 			socket.onmessage = function (event) {
 				console.log(event.data);
 			};
+
+			$('#logo-app').on('click', function () {
+
+				console.log('join clicked')
+
+				var data = {
+					event: 'leave',
+					room: 'auticka',
+				};
+
+				socket.send(JSON.stringify(data));
+
+				//socket.close();
+			});
 
 		</script>
 
