@@ -1,12 +1,13 @@
 {
-	"name": "NodePush",
-	"description": "Simple push server",
-	"author": "Martin Bažík <martin@bazo.sk>",
-	"repository": "",
-	"main": "server.js",
-	"dependencies": {
-		"socket.io": "0.9",
-		"commander": "*",
-		"deepmerge": "*"
-	}
+  "name": "NodePush",
+  "description": "Simple push server",
+  "author": "Martin Bažík <martin@bazo.sk>",
+  "repository": "",
+  "main": "server.js",
+  "dependencies": {
+    "commander": "*",
+    "deepmerge": "*",
+    "socket.io": "0.9",
+    "zmq": "^2.10.0"
+  }
 }

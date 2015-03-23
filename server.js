@@ -4,6 +4,7 @@ var socket = require('socket.io');
 var commander = require('commander');
 var merge = require('deepmerge');
 var verifyPayload = require('./functions/verifyPayload.js');
+var zmq = require('zmq');
 
 commander
 		.version('0.5')
@@ -48,7 +49,7 @@ if (config.server.https.enabled === true) {
 	try {
 		var server = protocol.createServer(options);
 	} catch (err) {
-		if(err.message === 'mac verify failure') {
+		if (err.message === 'mac verify failure') {
 			console.log('You need to provide a valid passphrase.');
 		}
 		process.exit(1);
@@ -61,28 +62,32 @@ if (config.server.https.enabled === true) {
 server.listen(config.server.port, config.server.host);
 var io = socket.listen(server, config.app);
 
+var sock = zmq.socket('rep');
+sock.bind('tcp://' + config.server.host + ':' + config.server.zmqPort);
+console.log('Request socket connected to port %s', config.server.zmqPort);
+
 if (config.security.enabled === true) {
 	var crypto = require('crypto');
 }
 
-io.sockets.on('connection', function(socket) {
+io.sockets.on('connection', function (socket) {
 
-	socket.on('subscribe', function(data) {
+	socket.on('subscribe', function (data) {
 		if (config.app.debug) {
 			console.log(socket.id + ' joined room: ' + data.room);
 		}
 		socket.join(data.room);
 	});
 
-	socket.on('unsubscribe', function(data) {
+	socket.on('unsubscribe', function (data) {
 		if (config.app.debug) {
 			console.log(socket.id + ' left room: ' + data.room);
 		}
 		socket.leave(data.room);
 	});
 
-	socket.on('push', function(data) {
-		var callback = function() {
+	socket.on('push', function (data) {
+		var callback = function () {
 			if (config.push.volatile) {
 				io.sockets.in(data.room).volatile.emit(data.event, data.data);
 			} else {
@@ -90,7 +95,7 @@ io.sockets.on('connection', function(socket) {
 			}
 		};
 
-		var errorCallback = function(message) {
+		var errorCallback = function (message) {
 			if (config.app.debug) {
 				console.log('Could not verify payload: ' + message);
 			}
@@ -98,9 +103,26 @@ io.sockets.on('connection', function(socket) {
 		verifyPayload(config, crypto, data, callback, errorCallback);
 	});
 
-	socket.on('disconnect', function() {
+	socket.on('disconnect', function () {
 		if (config.app.debug) {
 			console.log(socket.id + ' disconnected');
 		}
 	});
+});
+
+sock.on('message', function (buffer) {
+	var message = buffer.toString();
+
+	var data = JSON.parse(message);
+	if (!data.hasOwnProperty('room')) {
+		return;
+	}
+
+	if (config.push.volatile) {
+		io.sockets.in(data.room).volatile.emit(data.event, data.data);
+	} else {
+		io.sockets.in(data.room).emit(data.event, data.data);
+	}
+
+	sock.send('ok');
 });

@@ -2,6 +2,7 @@ var config = {
 	"server": {
 		"host": "0.0.0.0", //all interfaces
 		"port": 8080, //example port
+		zmqPort: 3000,
 		"https": {
 			"enabled": false,
 			"format": null, //keyCert or pfx
